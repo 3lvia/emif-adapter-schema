@@ -14,7 +14,7 @@ message VolumeSeriesMessage {
 }
 
 /* Represents a continuous series of volumes corresponding to a single metring point id and register. The length of each 
- * volume is specified by resolution. Volumes are ordered by measurement time, such that the first volume starts at 
+ * volume is specified by measurement_period.interval. Volumes are ordered by measurement time, such that the first volume starts at 
  * measurement_period.start and the last volume ends at measurement_period.end. */
 message VolumeSeries {
 
