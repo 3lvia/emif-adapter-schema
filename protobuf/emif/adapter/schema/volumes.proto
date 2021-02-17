@@ -1,0 +1,100 @@
+syntax = "proto3";
+package emif.adapter.schema.volumes;
+import "emif/adapter/schema/primitives.proto";
+import "google/protobuf/timestamp.proto";
+
+// A message containing one or multiple volume series
+message VolumeSeriesMessage {
+
+    // Specifies when the volume series message was created
+    google.protobuf.Timestamp created = 1;
+    
+    // List of volume series
+    repeated VolumeSeries entries = 2;
+}
+
+/* Represents a continuous series of volumes corresponding to a single metring point id and register. The length of each 
+ * volume is specified by resolution. Volumes are ordered by measurement time, such that the first volume starts at 
+ * measurement_period.start and the last volume ends at measurement_period.end. */
+message VolumeSeries {
+
+    // Unique id of a VolumeSeries, must be a valid UUID.
+    string payload_id = 1;
+    
+    string energy_party_gln = 2;
+
+    // Unique id of a metering point.
+    string metering_point_id = 3;
+
+    // The time the volume series was registered.
+    google.protobuf.Timestamp registration_time = 4;
+
+    // Specifies the time period that the volumes measure.
+    primitives.MeasurementPeriod measurement_period = 5;
+
+    // Specifies the unit that the values of the volumes are measured in.
+    primitives.Unit unit = 6;
+    
+    // Identifies the type of product that is measured
+    primitives.ProductIdentifier product_identifier = 7;
+    
+    // Specifies the direction of energy
+    primitives.Direction direction = 8;
+    
+    // Ordered sequence of volumes that has been measured in the measurement period
+    repeated Volume volumes = 9;
+}
+
+/* Represents an entry in a volume series that specifies an amount of energy that has been measured (or estimated) over 
+ * a measurement period. */
+message Volume {
+    
+    // The value of the volume, given in the specified unit
+    double value = 1;
+    
+    // The status of the volume, e.g. Measured
+    Status status = 2;
+    
+    // The validation code of the volume, or unspecified if the volume is measured
+    ValidationCode validationCode = 3;
+    
+    // The estimation code of the volume, or unspecified if the volume is measured
+    EstimationCode estimationCode = 4;
+
+    google.protobuf.Timestamp measurement_time = 5;
+}
+
+enum Status {
+    UnspecifiedStatus = 0;
+    Measured = 1;
+    Temporary = 2;
+    Estimated = 3;
+    FinallyEstimated = 4;
+}
+
+/* Represents the possible validation methods that can invalidate a volume. */
+enum ValidationCode {
+    UnspecifiedValidationCode = 0; // To avoid that we default on any validation code if left unspecified
+    V001 = 1;
+    V002 = 2;
+    V003 = 3;
+    V004 = 4;
+    V011 = 11;
+    V012 = 12;
+    V013 = 13;
+    V014 = 14;
+    V999 = 999;
+}
+
+/* Represents the possible estimation methods that can be used to estimate a volume. */
+enum EstimationCode {
+    UnspecifiedEstimationCode = 0; // To avoid that we default on any estimation code if left unspecified
+    E001 = 1;
+    E002 = 2;
+    E003 = 3;
+    E004 = 4;
+    E005 = 5;
+    E006 = 6;
+    E007 = 7;
+    E008 = 8;
+}

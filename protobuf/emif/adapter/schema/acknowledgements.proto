@@ -1,0 +1,26 @@
+syntax = "proto3";
+package emif.adapter.schema.acknowledgements;
+
+/* A message containing one or multiple acknowledgements from Elhub.*/
+message AcknowledgementMessage {
+    repeated Acknowledgement entries = 1;
+}
+
+/* Represents a response from Elhub regarding a single meter value series identified by payload_id. If the status equals 
+ * Rejected then the rejected_reason_codes list should not be empty. */
+message Acknowledgement {
+    // The payload_id of the VolumeSeries that this Acknowledgement  relates to.
+    string payload_id = 1;
+
+    oneof status {
+        Accepted accepted = 2;
+        Rejected rejected = 3;
+    }
+
+    message Accepted {
+    }
+
+    message Rejected {
+        repeated string reason_codes = 4;
+    }
+}

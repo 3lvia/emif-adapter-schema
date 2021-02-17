@@ -1,0 +1,52 @@
+syntax = "proto3";
+package emif.adapter.schema.primitives;
+import "google/protobuf/timestamp.proto";
+
+// Represents a unit of measurement for meter values
+enum Unit {
+    
+    // Unspecified unit
+    UnspecifiedUnit = 0;
+    
+    // Kilowatt hour
+    kWh = 1;
+    
+    // Kilo volt-ampere reactive
+    kVArh = 2;
+}
+
+// Represents a period where meter values have been measured/estimated
+message MeasurementPeriod {
+
+    // Specifies the duration between each measurement according to ISO8601 format.
+    string interval = 1;
+
+    // The start time of the measurement period
+    google.protobuf.Timestamp start_time = 2;
+
+    // The end time of the measurement period
+    google.protobuf.Timestamp end_time = 3;
+}
+// Identification of an energy product
+enum ProductIdentifier {
+    
+    UnspecifiedProductIdentifier = 0;
+    
+    EnergyActive = 1;
+    
+    EnergyReactive = 2;
+    
+    EnergyReactiveInductive = 3;
+    
+    EnergyReactiveCapacitive = 4;
+}
+
+// Specifies the direction of energy flow
+enum Direction {
+    
+    // Production
+    In = 0;
+    
+    // Consumption
+    Out = 1;
+}

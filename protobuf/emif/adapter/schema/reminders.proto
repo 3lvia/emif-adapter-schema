@@ -1,0 +1,40 @@
+syntax = "proto3";
+package emif.adapter.schema.reminders;
+import "emif/adapter/schema/primitives.proto";
+import "google/protobuf/timestamp.proto";
+
+/* A message containing one or multiple reminders. */
+message ReminderMessage {
+    google.protobuf.Timestamp created = 1;
+    repeated Reminder entries = 2;
+}
+
+/* Signals that one or multiple expected meter value series has not been received. */
+message Reminder {
+    
+    // The type of reminder
+    ReminderType type = 1;
+    
+    // The metering point where one or multiple expected meter value series has not been received
+    string metering_point_id = 2;
+    
+    // The measurement period where one or multiple expected meter value series has not been received
+    primitives.MeasurementPeriod measurement_period = 3;
+}
+
+enum ReminderType {
+
+    UnspecifiedReminderType = 0;
+    
+    // Reminder for interval volume
+    IntervalVolume = 1;
+    
+    // Reminder for period volume
+    PeriodVolume = 2;
+    
+    // Reminder for missing confirmation from meter data responsible of meter index received from Balance Supplier
+    MissingIndexConfirmation = 3;
+    
+    // Reminder for outdated estimated annual consumption
+    OutdatedEstimatedAnnualConsumption = 4;
+}
