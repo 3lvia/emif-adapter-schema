@@ -1,0 +1,43 @@
+syntax = "proto3";
+package emif.adapter.schema.submission_status_updates;
+import "google/protobuf/timestamp.proto";
+
+/* A message containing one or multiple submission statuses */
+message SubmissionStatusMessage {
+    repeated SubmissionStatus entries = 1;
+}
+
+/* Specifies the status of submission to Elhub of one meter value series, identified by a unique payload_id. If 
+ * SubmissionStatus.succeeded is not set then SubmissionStatus.failed.reason must be specified. */
+message SubmissionStatus {
+    
+    // The payload_id that the SubmissionStatus corresponds to.
+    string payload_id = 1;
+    
+    oneof status {
+        Succeeded succeeded = 2;
+        Failed failed = 3;
+    }
+    
+    // Signals that the submission succeeded
+    message Succeeded {
+        // Specifies the time when the payload was sent to Elhub
+        google.protobuf.Timestamp at = 1;
+    }
+    
+    // Signals that the submission failed
+    message Failed {
+        google.protobuf.Timestamp at = 1;
+        SubmissionFailureReasonCode reasonCode = 2;
+        string reasonMessage = 3;
+    }    
+}
+
+enum SubmissionFailureReasonCode {
+
+    UnspecifiedReasonCode = 0;
+
+    ValidationError = 1;
+
+    Transient = 2;
+}
