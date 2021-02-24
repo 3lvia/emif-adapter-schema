@@ -1,5 +1,5 @@
 syntax = "proto3";
-package emif.adapter.schema.submission_status_updates;
+package emif.adapter.schema.submission_statuses;
 import "google/protobuf/timestamp.proto";
 
 /* A message containing one or multiple submission statuses */
