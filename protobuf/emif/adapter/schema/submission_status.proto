@@ -19,6 +19,9 @@ message SubmissionStatus {
         Failed failed = 3;
     }
     
+    // Metrics regarding the submission
+    google.protobuf.Timestamp metrics = 4;
+    
     // Signals that the submission succeeded
     message Succeeded {
         // Specifies the time when the payload was sent to Elhub
@@ -27,10 +30,27 @@ message SubmissionStatus {
     
     // Signals that the submission failed
     message Failed {
+        // Specifies the time when the payload failed
         google.protobuf.Timestamp at = 1;
+
+        // Specifies a reason code of why the submission failed
         SubmissionFailureReasonCode reasonCode = 2;
+
+        // A message that describes why the submission failed
         string reasonMessage = 3;
-    }    
+    }
+    
+    // Represents a colleciton of metrics regarding a submission
+    message Metrics {
+        // The time when the payload was enqueued
+        google.protobuf.Timestamp enqueue_time = 1;
+
+        // The time when the payload was read of the queue
+        google.protobuf.Timestamp dequeue_time = 2;
+
+        // The number of retry attempts in submitting the payload
+        int32 number_of_retires = 3;
+    }
 }
 
 enum SubmissionFailureReasonCode {
