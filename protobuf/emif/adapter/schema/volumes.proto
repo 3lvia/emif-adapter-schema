@@ -56,10 +56,10 @@ message Volume {
     Status status = 2;
     
     // The validation code of the volume, or unspecified if the volume is measured
-    ValidationCode validationCode = 3;
+    ValidationCode validation_code = 3;
     
     // The estimation code of the volume, or unspecified if the volume is measured
-    EstimationCode estimationCode = 4;
+    EstimationCode estimation_code = 4;
 
     google.protobuf.Timestamp measurement_time = 5;
 }

@@ -34,10 +34,10 @@ message SubmissionStatus {
         google.protobuf.Timestamp at = 1;
 
         // Specifies a reason code of why the submission failed
-        SubmissionFailureReasonCode reasonCode = 2;
+        SubmissionFailureReasonCode reason_code = 2;
 
         // A message that describes why the submission failed
-        string reasonMessage = 3;
+        string reason_message = 3;
     }
     
     // Represents a colleciton of metrics regarding a submission
