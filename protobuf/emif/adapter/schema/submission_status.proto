@@ -49,7 +49,7 @@ message SubmissionStatus {
         google.protobuf.Timestamp dequeue_time = 2;
 
         // The number of retry attempts in submitting the payload
-        int32 number_of_retires = 3;
+        int32 number_of_retries = 3;
     }
 }
 
