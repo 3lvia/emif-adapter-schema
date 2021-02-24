@@ -20,7 +20,7 @@ message SubmissionStatus {
     }
     
     // Metrics regarding the submission
-    google.protobuf.Timestamp metrics = 4;
+    Metrics metrics = 4;
     
     // Signals that the submission succeeded
     message Succeeded {
