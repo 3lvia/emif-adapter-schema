@@ -29,7 +29,7 @@ steps:
      wget $(protobufWGet)
      unzip $(protoBufFile) -d $(protoBufEnvPath)
      export PATH=$PATH:$(protoBufEnvPath)/bin
-     protoc ./protobuf/emif/adapter/schema/reminders.proto --csharp_out=Emif/Adapter/Schema --proto_path=./protobuf
+     protoc ./protobuf/emif/adapter/schema/*.proto --csharp_out=Emif/Adapter/Schema --proto_path=./protobuf
     displayName: 'Get protoc and generate C# files'
   - task: DotNetCoreCLI@2
     displayName: 'build'
