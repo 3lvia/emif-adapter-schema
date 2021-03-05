@@ -36,10 +36,9 @@ steps:
      wget $(protobufWGet)
      unzip $(protoBufFile) -d $(protoBufEnvPath)
      export PATH=$PATH:$(protoBufEnvPath)/bin
-    displayName: 'Get ProtoBuf compiler'
-  - bash: |
+     cd src
      protoc ./protobuf/emif/adapter/schema/*.proto --csharp_out=Emif/Adapter/Schema --proto_path=./protobuf
-    displayName: 'Generate C# files'
+    displayName: 'Get protoc and generate C# files'
   - task: DotNetCoreCLI@2
     displayName: 'build'
     inputs:
