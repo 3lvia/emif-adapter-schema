@@ -22,21 +22,22 @@ variables:
   tagVersion: '$(Build.SourceBranchName)'
 
 steps:
+  - task: UseDotNet@2
+    displayName: 'Use .NET Core sdk'
+    inputs:
+      packageType: sdk
+      version: 3.x
   - task: DotNetCoreCLI@2
     displayName: 'dotnet Restore'
     inputs:
       command: 'restore'
       projects: 'Emif.Adapter.Schema.csproj'
-      feedsToUse: config
-      nugetConfigPath: NuGet.config
   - bash: |
      wget $(protobufWGet)
      unzip $(protoBufFile) -d $(protoBufEnvPath)
      export PATH=$PATH:$(protoBufEnvPath)/bin
-    displayName: 'Get ProtoBuf compiler'
-  - bash: |
      protoc ./protobuf/emif/adapter/schema/*.proto --csharp_out=Emif/Adapter/Schema --proto_path=./protobuf
-    displayName: 'Generate C# files'
+    displayName: 'Get protoc and generate C# files'
   - task: DotNetCoreCLI@2
     displayName: 'build'
     inputs:
