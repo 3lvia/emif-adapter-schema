@@ -1,6 +1,6 @@
 syntax = "proto3";
 package emif.adapter.schema.volumes;
-import "primitives.proto";
+import "emif/adapter/schema/primitives.proto";
 import "google/protobuf/timestamp.proto";
 
 // A message containing one or multiple volume series
