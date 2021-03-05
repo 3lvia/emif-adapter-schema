@@ -22,13 +22,16 @@ variables:
   tagVersion: '$(Build.SourceBranchName)'
 
 steps:
+  - task: UseDotNet@2
+    displayName: 'Use .NET Core sdk'
+    inputs:
+      packageType: sdk
+      version: 3.x
   - task: DotNetCoreCLI@2
     displayName: 'dotnet Restore'
     inputs:
       command: 'restore'
       projects: 'Emif.Adapter.Schema.csproj'
-      feedsToUse: config
-      nugetConfigPath: NuGet.config
   - bash: |
      wget $(protobufWGet)
      unzip $(protoBufFile) -d $(protoBufEnvPath)
