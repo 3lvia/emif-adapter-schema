@@ -28,12 +28,8 @@ steps:
      export PATH=$PATH:$(protoBufEnvPath)/bin
     displayName: 'Get ProtoBuf compiler'
   - bash: |
-     protoc --proto_path=protobuf/emif/adapter/schema --csharp_out=Emif/Adapter/Schema --csharp_opt=base_namespace=Emif.Adapter.Schema acknowledgements.proto
-     protoc --proto_path=protobuf/emif/adapter/schema --csharp_out=Emif/Adapter/Schema --csharp_opt=base_namespace=Emif.Adapter.Schema primitives.proto
-     protoc --proto_path=protobuf/emif/adapter/schema --csharp_out=Emif/Adapter/Schema --csharp_opt=base_namespace=Emif.Adapter.Schema reminders.proto
-     protoc --proto_path=protobuf/emif/adapter/schema --csharp_out=Emif/Adapter/Schema --csharp_opt=base_namespace=Emif.Adapter.Schema submission_status.proto
-     protoc --proto_path=protobuf/emif/adapter/schema --csharp_out=Emif/Adapter/Schema --csharp_opt=base_namespace=Emif.Adapter.Schema volumes.proto
-    displayName: 'Generate C# files per proto'
+     protoc ./protobuf/emif/adapter/schema/*.proto --csharp_out=Emif/Adapter/Schema --proto_path=./protobuf
+    displayName: 'Generate C# files'
   - task: DotNetCoreCLI@2
     displayName: 'build'
     inputs:
