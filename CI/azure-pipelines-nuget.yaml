@@ -1,0 +1,63 @@
+---
+trigger:
+  branches:
+    exclude: ['*']
+  tags:
+    include: ['*']
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+pr:
+  autoCancel: 'true'
+  branches:
+    exclude:
+      - 'trunk'
+      - 'feature/*'
+
+variables:
+  protoBufFile: 'protoc-3.6.1-linux-x86_64.zip'
+  protoBufEnvPath:  '$(system.defaultWorkingDirectory)/protoc'
+  protobufWGet: 'https://github.com/protocolbuffers/protobuf/releases/download/v3.6.1/protoc-3.6.1-linux-x86_64.zip'
+  tagVersion: '$(Build.SourceBranchName)'
+
+steps:
+  - task: DotNetCoreCLI@2
+    displayName: 'dotnet Restore'
+    inputs:
+      command: 'restore'
+      projects: 'Emif.Adapter.Schema.csproj'
+      feedsToUse: config
+      nugetConfigPath: NuGet.config
+  - bash: |
+     wget $(protobufWGet)
+     unzip $(protoBufFile) -d $(protoBufEnvPath)
+     export PATH=$PATH:$(protoBufEnvPath)/bin
+    displayName: 'Get ProtoBuf compiler'
+  - bash: |
+     protoc --proto_path=protobuf/emif/adapter/schema --csharp_out=Emif/Adapter/Schema --csharp_opt=base_namespace=Emif.Adapter.Schema acknowledgements.proto
+     protoc --proto_path=protobuf/emif/adapter/schema --csharp_out=Emif/Adapter/Schema --csharp_opt=base_namespace=Emif.Adapter.Schema primitives.proto
+     protoc --proto_path=protobuf/emif/adapter/schema --csharp_out=Emif/Adapter/Schema --csharp_opt=base_namespace=Emif.Adapter.Schema reminders.proto
+     protoc --proto_path=protobuf/emif/adapter/schema --csharp_out=Emif/Adapter/Schema --csharp_opt=base_namespace=Emif.Adapter.Schema submission_status.proto
+     protoc --proto_path=protobuf/emif/adapter/schema --csharp_out=Emif/Adapter/Schema --csharp_opt=base_namespace=Emif.Adapter.Schema volumes.proto
+    displayName: 'Generate C# files per proto'
+  - task: DotNetCoreCLI@2
+    displayName: 'build'
+    inputs:
+      command: 'build'
+
+  - task: DotNetCoreCLI@2
+    displayName: "dotnet pack"
+    inputs:
+      command: pack
+      packagesToPack: Emif.Adapter.Schema.csproj
+      versioningScheme: byEnvVar
+      versionEnvVar: Build.SourceBranchName
+
+  - task: NuGetCommand@2
+    displayName: "Publish NuGet package"
+    inputs:
+      command: push
+      packagesToPush: "$(Build.ArtifactStagingDirectory)/*.nupkg"
+      nuGetFeedType: external
+      publishFeedCredentials: NuGetLibs
