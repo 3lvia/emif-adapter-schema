@@ -42,9 +42,6 @@ message SubmissionStatus {
     
     // Represents a colleciton of metrics regarding a submission
     message Metrics {
-        // The time when the payload was enqueued
-        google.protobuf.Timestamp enqueue_time = 1;
-
         // The time when the payload was read of the queue
         google.protobuf.Timestamp dequeue_time = 2;
 
