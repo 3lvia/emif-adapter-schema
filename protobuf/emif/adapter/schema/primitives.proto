@@ -13,6 +13,9 @@ enum Unit {
     
     // Kilo volt-ampere reactive
     kVArh = 2;
+
+    // Megawatt hour
+    MWh = 3
 }
 
 // Represents a period where meter values have been measured/estimated
