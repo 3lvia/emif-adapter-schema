@@ -43,6 +43,9 @@ message VolumeSeries {
     
     // Ordered sequence of volumes that has been measured in the measurement period
     repeated Volume volumes = 9;
+
+    // Identifies the recipient of the volume series (optional)
+    string recipient_gln = 10;
 }
 
 /* Represents an entry in a volume series that specifies an amount of energy that has been measured (or estimated) over 
