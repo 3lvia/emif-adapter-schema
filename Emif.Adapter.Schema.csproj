@@ -15,7 +15,7 @@
 
   <ItemGroup>
     <PackageReference Include="Google.Protobuf" Version="3.24.1" />
-    <PackageReference Include="Google.Protobuf.Tools" Version="3.24.0" />
+    <PackageReference Include="Google.Protobuf.Tools" Version="3.24.1" />
   </ItemGroup>
 
   <ItemGroup>
