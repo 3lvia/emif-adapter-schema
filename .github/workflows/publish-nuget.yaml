@@ -84,15 +84,6 @@ jobs:
       - name: List artifacts
         run: ls -1 out
 
-      - name: Notify Slack on success
-        if: success()
-        uses: 3lvia/core-github-actions-templates/slack-message@trunk
-        with:
-          slack-channel: '#mdmx-deployments'
-          message: ':white_check_mark: Published `Emif.Adapter.Schema` `${{ env.PACKAGE_VERSION }}` to NuGet.org'
-          environment: dev
-          system: mdmx
-
       - name: Notify Slack on failure
         if: failure()
         uses: 3lvia/core-github-actions-templates/slack-message@trunk
