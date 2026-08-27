@@ -27,7 +27,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Emif\Adapter\Schema\" />
+    <!-- Grpc.Tools generates C# from the .proto files at build time (into obj/),
+         replacing the manual protoc step that the old Azure DevOps pipeline ran. -->
+    <Protobuf Include="protobuf/**/*.proto" ProtoRoot="protobuf" GrpcServices="None" />
   </ItemGroup>
 
 </Project>

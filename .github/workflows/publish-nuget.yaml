@@ -1,0 +1,94 @@
+name: Publish Emif.Adapter.Schema NuGet Package
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Existing tag to build (e.g., v1.2.3)'
+        required: true
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: publish-nuget-${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout (full history)
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-depth: 0
+
+      - name: Checkout tag
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        run: |
+          git fetch --tags --prune --force
+          git checkout "refs/tags/${{ inputs.tag }}"
+
+      - name: Fetch NuGet key from Vault
+        uses: 3lvia/core-github-actions-templates/vault@trunk
+        with:
+          environment: dev
+          exportToken: false
+          secrets: |
+            libraries/kv/data/shared nuget_api_key | NUGET_KEY
+          system: mdmx
+
+      - name: Determine package version
+        run: |
+          if [ "${{ github.event_name }}" = "push" ]; then
+            RAW_TAG="${GITHUB_REF_NAME}"
+          else
+            RAW_TAG="${{ inputs.tag }}"
+          fi
+          CLEAN="${RAW_TAG#v}"
+          echo "PACKAGE_VERSION=$CLEAN" >> $GITHUB_ENV
+          echo "Package version: $CLEAN"
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore
+        run: dotnet restore Emif.Adapter.Schema.csproj
+
+      # Grpc.Tools generates the C# from the .proto files during build.
+      - name: Build
+        run: dotnet build Emif.Adapter.Schema.csproj --configuration Release --no-restore
+
+      - name: Pack
+        run: |
+          dotnet pack Emif.Adapter.Schema.csproj \
+            --configuration Release \
+            -p:PackageVersion=${PACKAGE_VERSION} \
+            -p:ContinuousIntegrationBuild=true \
+            --no-build \
+            -o out
+
+      - name: Publish to NuGet
+        run: |
+          dotnet nuget push out/*.nupkg \
+            --api-key "$NUGET_KEY" \
+            --source https://api.nuget.org/v3/index.json \
+            --skip-duplicate
+
+      - name: List artifacts
+        run: ls -1 out
+
+      - name: Notify Slack on failure
+        if: failure()
+        uses: 3lvia/core-github-actions-templates/slack-message@trunk
+        with:
+          slack-channel: '#mdmx-deployments'
+          message: ':x: Failed to publish `Emif.Adapter.Schema` `${{ env.PACKAGE_VERSION }}` to NuGet.org — <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|view run>'
+          environment: dev
+          system: mdmx
