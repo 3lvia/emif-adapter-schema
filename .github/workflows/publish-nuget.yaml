@@ -33,15 +33,6 @@ jobs:
           git fetch --tags --prune --force
           git checkout "refs/tags/${{ inputs.tag }}"
 
-      - name: Fetch NuGet key from Vault
-        uses: 3lvia/core-github-actions-templates/vault@trunk
-        with:
-          environment: dev
-          exportToken: false
-          secrets: |
-            libraries/kv/data/shared nuget_api_key | NUGET_KEY
-          system: mdmx
-
       - name: Determine package version
         run: |
           if [ "${{ github.event_name }}" = "push" ]; then
@@ -74,12 +65,13 @@ jobs:
             --no-build \
             -o out
 
-      - name: Publish to NuGet
-        run: |
-          dotnet nuget push out/*.nupkg \
-            --api-key "$NUGET_KEY" \
-            --source https://api.nuget.org/v3/index.json \
-            --skip-duplicate
+      # CORE-2696: no nuget.org key here. The central 3lvia/nuget-publisher verifies
+      # this run and publishes every package in out via Trusted Publishing.
+      - name: Publish to nuget.org
+        uses: 3lvia/core-github-actions-templates/nuget-publish@trunk
+        with:
+          system: mdmx
+          packages-path: out
 
       - name: List artifacts
         run: ls -1 out
